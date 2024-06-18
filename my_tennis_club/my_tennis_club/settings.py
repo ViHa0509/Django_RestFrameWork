@@ -24,23 +24,25 @@ SECRET_KEY = 'django-insecure-4t&ugc_17wk!xx0q4h9xskyw*-k5669+&^!16vv$&)tqn=8)66
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '127.0.0.1:5173']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'moz-extension://87038b6a-577c-4c6b-9d0a-274a68804768', 'http://127.0.0.1:5173']
-CSRF_USE_SESSIONS = True
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = [
-    'Content-Type',
-    'Authorization',
-    'headers', 
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000' 
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
+    'moz-extension://87038b6a-577c-4c6b-9d0a-274a68804768'
 ]
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
-#     "http://127.0.0.1:5173",
-# ]
+#CSRF_USE_SESSIONS = True
+CORS_ALLOW_CREDENTIALS = True
+# Allow specific origins
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # React development server
+    # Add other origins as needed
+]
 
 # Application definition
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,10 +53,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'ClubMembers',
-    'corsheaders'
+    
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -63,7 +66,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'my_tennis_club.urls'
