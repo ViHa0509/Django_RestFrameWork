@@ -33,6 +33,19 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = CustomUserSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'], url_path='current-user')
+    def get_current_user(self, request):
+        queryset = request.user
+        serializer = CustomUserSerializer(queryset, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    # @action(detail=False, methods=['put'], url_path='current-user')
+    # def get_current_user(self, request):
+    #     updated_data = request.data
+    #     queryset = request.user
+    #     serializer = CustomUserSerializer(queryset, many=False)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+
     @action(detail=True, methods=['get'], url_path='<pk>')
     def get_user(self, request, pk):
         queryset = self.get_queryset()

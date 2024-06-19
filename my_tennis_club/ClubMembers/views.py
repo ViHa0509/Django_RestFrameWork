@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .clubserializers import ClubSerializer, ClubMemberSerializer, JoinClubMember
+from members.serializers import CustomUserSerializer
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -44,9 +45,25 @@ class ClubViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='all-member')
     def member_group(self, request, pk):
+        user_detail = request.query_params.get('user-detail', 'false').lower() == 'true'
+        print(f"USER DETAIL PARAM: {user_detail}")
         club_member = ClubMember.objects.filter(club_id=pk)
-        serializer = ClubMemberSerializer(club_member, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if user_detail:
+            user_ids = club_member.values_list('user_id', flat=True)
+            print(f"User-ids: {user_ids}")
+            users = CustomUser.objects.filter(pk__in=user_ids)
+            UserSerializer = CustomUserSerializer(users, many=True)
+            return Response(UserSerializer.data, status=status.HTTP_200_OK)
+        else:
+            serializer = ClubMemberSerializer(club_member, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # @action(detail=True, method=['get'], url_path='all-member-details')
+    # def list_club_members(self, request, pk):
+    #     queryset = ClubMember.objects.filter(id=pk)
+    #     print(queryset)
+
+    #     return Response(status=status.HTTP_400_BAD_REQUEST)    
 
 class ClubMemberViewSet(viewsets.ModelViewSet):
     serializer_class = ClubMemberSerializer
